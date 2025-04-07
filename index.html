@@ -1,101 +1,94 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KARAOKEMOC</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      color: #333;
+      background-color: #f0f8ff;
+      padding: 20px;
+      color: #000;
     }
     h1 {
+      text-align: center;
+      color: #00008b;
       font-size: 48px;
-      color: blue;
-      margin-top: 20px;
     }
     .comandos {
-      font-size: 18px;
-      margin: 10px auto 20px;
-      width: 90%;
-      max-width: 800px;
       text-align: center;
-    }
-    .comandos span {
-      color: blue;
       font-size: 20px;
-      font-weight: bold;
-    }
-    .instrucoes {
-      font-size: 24px;
-      color: blue;
-      margin: 20px auto;
-      max-width: 800px;
-      line-height: 1.5;
-    }
-    #search {
-      padding: 10px;
-      font-size: 20px;
-      width: 60%;
       margin-bottom: 20px;
     }
-    .grupo-letra {
-      text-align: left;
-      margin: 20px auto;
-      max-width: 800px;
-      font-size: 22px;
+    .comandos span {
+      color: #00008b;
       font-weight: bold;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 5px;
+      font-size: 22px;
     }
-    table {
-      margin: 0 auto;
-      width: 90%;
-      max-width: 1000px;
-      border-collapse: collapse;
+    .instrucoes {
+      text-align: center;
+      font-size: 22px;
+      color: #00008b;
+      margin-bottom: 20px;
+    }
+    .instrucoes span.seta {
+      display: block;
+      font-size: 28px;
+      margin: -10px 0 10px;
+    }
+    input[type="text"] {
+      display: block;
+      margin: 0 auto 20px auto;
+      width: 80%;
+      padding: 10px;
       font-size: 20px;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 18px;
+    }
     th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #ccc;
+      padding: 8px;
       text-align: left;
     }
     th {
-      background-color: #eee;
+      background-color: #e0e0e0;
     }
     .codigo {
-      background-color: blue;
+      background-color: #0000cd;
       color: white;
-      font-size: 22px;
-      padding: 5px 10px;
-      border-radius: 5px;
+      font-weight: bold;
+      font-size: 20px;
+      padding: 4px 8px;
+      border-radius: 4px;
       display: inline-block;
     }
   </style>
 </head>
 <body>
   <h1>KARAOKEMOC</h1>
-
   <div class="comandos">
-    <strong>COMANDOS:</strong> <span>S</span> - Encerra a música atual e volta para a tela de digitar outra música &nbsp;&nbsp; 
-    <span>Q</span> - Aumenta meio tom a música &nbsp;&nbsp; 
-    <span>W</span> - Diminui meio tom &nbsp;&nbsp; 
-    <span>P</span> - Pausa a música &nbsp;&nbsp; 
-    <span>R</span> - Reinicia a música &nbsp;&nbsp; 
-    <span>ESQ</span> - Sai do programa ↓
+    <strong>COMANDOS:</strong> <span>S</span> - Encerra a música atual e volta para a tela de digitar outra música; <span>Q</span> - Aumenta meio tom a música; <span>W</span> - Diminui meio tom; <span>P</span> - Pausa a música; <span>R</span> - Reinicia a música; <span>ESQ</span> - Sai do programa do Karaokê ↓
   </div>
-
   <div class="instrucoes">
-    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA... VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA ↓
+    <strong>PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...</strong><br>
+    Veja o código correspondente e pressione enter no programa ↓
   </div>
-
-  <input type="text" id="search" oninput="filtrar()" placeholder="Digite o nome do artista ou música">
-
-  <div id="tabela"></div>
+  <input type="text" id="search" placeholder="Digite aqui..." onkeyup="filtrar()" />
+  <table>
+    <thead>
+      <tr>
+        <th>Artista</th>
+        <th>Música</th>
+        <th>Código</th>
+      </tr>
+    </thead>
+    <tbody id="tabela"></tbody>
+  </table>
 
   <script>
     const musicas = [
@@ -187,35 +180,9 @@
       const termo = document.getElementById("search").value.toLowerCase();
       const tabela = document.getElementById("tabela");
       tabela.innerHTML = "";
-
-      const filtradas = musicas
-        .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
-        .sort((a, b) => a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica));
-
-      let letraAtual = "";
-
-      filtradas.forEach(m => {
-        const primeiraLetra = m.artista[0].toUpperCase();
-        if (primeiraLetra !== letraAtual) {
-          letraAtual = primeiraLetra;
-          tabela.innerHTML += `<div class='grupo-letra'>Letra ${letraAtual}</div>`;
-          tabela.innerHTML += `<table><tr><th>ARTISTA</th><th>MÚSICA</th><th>CÓDIGO</th></tr>`;
-        }
-        tabela.innerHTML += `<tr><td>${m.artista}</td><td>${m.musica}</td><td><span class='codigo'>${m.codigo}</span></td></tr>`;
-      });
-
-      if (filtradas.length > 0) {
-        tabela.innerHTML += "</table>";
-      }
-    }
-
-    window.onload = filtrar;
-  </script>
-</body>
-</html>
-
       musicas
         .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
+        .sort((a, b) => a.artista.localeCompare(b.artista))
         .forEach(m => {
           tabela.innerHTML += `
             <tr>
