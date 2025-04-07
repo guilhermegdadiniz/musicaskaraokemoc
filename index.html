@@ -13,7 +13,7 @@
 
     h1 {
       text-align: center;
-      color: #990000;
+      color: #0047AB; /* Azul vibrante */
       font-size: 36px;
       margin-bottom: 5px;
     }
@@ -26,6 +26,14 @@
       padding: 10px;
       border: 1px solid #ffcccc;
       border-radius: 8px;
+    }
+
+    .comandos::before {
+      content: "COMANDOS:";
+      display: block;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
     }
 
     input[type="text"] {
@@ -64,6 +72,12 @@
       font-weight: bold;
     }
 
+    td.codigo {
+      color: #0047AB;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
     .hidden {
       display: none;
     }
@@ -71,14 +85,14 @@
 </head>
 <body>
   <h1>KARAOKE MOC</h1>
+
   <div class="comandos">
-    Comandos:<br>
-    <strong>S</strong> - Encerra a música atual e volta para a tela de digitar outra música |
-    <strong>Q</strong> - Aumenta meio tom |
-    <strong>W</strong> - Diminui meio tom |
-    <strong>P</strong> - Pausa a música |
-    <strong>R</strong> - Reinicia a música |
-    <strong>ESQ</strong> - Sai do programa do Karaoke
+    S - Encerra a música atual e volta para a tela de digitar outra música |
+    Q - Aumenta meio tom |
+    W - Diminui meio tom |
+    P - Pausa a música |
+    R - Reinicia a música |
+    ESQ - Sai do programa do Karaoke
   </div>
 
   <input type="text" id="searchInput" placeholder="Digite nome do artista, música ou código...">
@@ -143,7 +157,7 @@ const resultadoDiv = document.getElementById('resultado');
     function criarTabela(lista) {
       let html = '<table><thead><tr><th>Artista</th><th>Música</th><th>Código</th></tr></thead><tbody>';
       lista.forEach(item => {
-        html += `<tr><td>${item.artista}</td><td>${item.musica}</td><td>${item.codigo}</td></tr>`;
+        html += `<tr><td>${item.artista}</td><td>${item.musica}</td><td class="codigo">${item.codigo}</td></tr>`;
       });
       html += '</tbody></table>';
       return html;
