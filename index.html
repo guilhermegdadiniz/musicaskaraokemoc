@@ -6,66 +6,29 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
-      margin: 0;
-      padding: 2rem;
+      padding: 20px;
     }
-
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-
     input {
-      display: block;
-      margin: 0 auto 2rem;
-      padding: 10px;
-      font-size: 1rem;
-      width: 80%;
-      max-width: 500px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    table {
       width: 100%;
-      border-collapse: collapse;
-      background-color: white;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 16px;
     }
-
-    th, td {
-      padding: 12px;
+    .resultado {
       border-bottom: 1px solid #ddd;
-      text-align: left;
+      padding: 10px 0;
     }
-
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    @media (max-width: 600px) {
-      td, th {
-        font-size: 0.9rem;
-      }
+    .codigo {
+      font-weight: bold;
+      color: #0077cc;
     }
   </style>
 </head>
 <body>
-  <h1>Busca de Músicas</h1>
-  <input type="text" id="searchInput" placeholder="Digite artista, música ou código...">
+  <h1>Busca de Músicas para Karaokê</h1>
+  <input type="text" id="busca" placeholder="Digite nome do artista, música ou código..." oninput="filtrar()">
 
-  <table id="musicTable">
-    <thead>
-      <tr>
-        <th>Artista</th>
-        <th>Música</th>
-        <th>Código</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-      <!-- Os dados serão inseridos aqui -->
-    </tbody>
-  </table>
+  <div id="resultados"></div>
 
   <script>
     const musicas = [
@@ -596,28 +559,30 @@
 { artista: "Anavitoria", musica: "Te Amar E Massa Demais", codigo: "17208" },
 { artista: "Anavitoria - Duda Beat", musica: "Nao Passa Vontade", codigo: "17019" }
  ];
-const input = document.getElementById("searchInput");
-    const tableBody = document.getElementById("tableBody");
 
-    function renderTable(data) {
-      tableBody.innerHTML = "";
-      data.forEach(m => {
-        const row = `<tr><td>${m.artista}</td><td>${m.musica}</td><td>${m.codigo}</td></tr>`;
-        tableBody.insertAdjacentHTML('beforeend', row);
+    function filtrar() {
+      const termo = document.getElementById('busca').value.toLowerCase();
+      const resultados = document.getElementById('resultados');
+      resultados.innerHTML = '';
+
+      const encontrados = musicas.filter(m =>
+        m.artista.toLowerCase().includes(termo) ||
+        m.musica.toLowerCase().includes(termo) ||
+        m.codigo.includes(termo)
+      );
+
+      if (encontrados.length === 0) {
+        resultados.innerHTML = '<p>Nenhuma música encontrada.</p>';
+        return;
+      }
+
+      encontrados.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'resultado';
+        div.innerHTML = `<div><strong>${m.musica}</strong> - ${m.artista} <span class="codigo">[${m.codigo}]</span></div>`;
+        resultados.appendChild(div);
       });
     }
-
-    input.addEventListener("input", () => {
-      const search = input.value.toLowerCase();
-      const filtered = musicas.filter(m =>
-        m.artista.toLowerCase().includes(search) ||
-        m.musica.toLowerCase().includes(search) ||
-        m.codigo.includes(search)
-      );
-      renderTable(filtered);
-    });
-
-    renderTable(musicas);
   </script>
 </body>
 </html>
