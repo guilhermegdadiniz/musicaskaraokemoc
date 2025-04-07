@@ -1,94 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>KARAOKEMOC</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f8ff;
+      background: #f5f5f5;
+      margin: 0;
       padding: 20px;
-      color: #000;
+      font-size: 16px;
     }
     h1 {
       text-align: center;
-      color: #00008b;
-      font-size: 48px;
+      color: blue;
+      font-size: 40px;
+      margin-bottom: 10px;
     }
     .comandos {
-      text-align: center;
-      font-size: 20px;
+      font-size: 16px;
       margin-bottom: 20px;
+      line-height: 1.6;
     }
     .comandos span {
-      color: #00008b;
+      color: blue;
       font-weight: bold;
-      font-size: 22px;
+      font-size: 18px;
     }
-    .instrucoes {
+    .search-section {
       text-align: center;
-      font-size: 22px;
-      color: #00008b;
-      margin-bottom: 20px;
+      margin: 20px 0;
     }
-    .instrucoes span.seta {
-      display: block;
-      font-size: 28px;
-      margin: -10px 0 10px;
+    .search-section h2 {
+      color: blue;
+      font-size: 20px;
+      margin-bottom: 10px;
     }
-    input[type="text"] {
-      display: block;
-      margin: 0 auto 20px auto;
+    #search {
       width: 80%;
       padding: 10px;
-      font-size: 20px;
+      font-size: 16px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      font-size: 18px;
+      font-size: 16px;
     }
     th, td {
-      border-bottom: 1px solid #ccc;
       padding: 8px;
       text-align: left;
-    }
-    th {
-      background-color: #e0e0e0;
+      border-bottom: 1px solid #ccc;
     }
     .codigo {
-      background-color: #0000cd;
       color: white;
-      font-weight: bold;
-      font-size: 20px;
+      background: blue;
       padding: 4px 8px;
       border-radius: 4px;
-      display: inline-block;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .letra-header {
+      font-size: 22px;
+      margin-top: 30px;
+      color: #444;
+      border-bottom: 2px solid #ccc;
     }
   </style>
 </head>
 <body>
   <h1>KARAOKEMOC</h1>
   <div class="comandos">
-    <strong>COMANDOS:</strong> <span>S</span> - Encerra a música atual e volta para a tela de digitar outra música; <span>Q</span> - Aumenta meio tom a música; <span>W</span> - Diminui meio tom; <span>P</span> - Pausa a música; <span>R</span> - Reinicia a música; <span>ESQ</span> - Sai do programa do Karaokê ↓
+    <strong>COMANDOS:</strong>
+    <br><span>S</span> - Encerra a música atual e volta para a tela de digitar outra música
+    <br><span>Q</span> - Aumenta meio tom a música
+    <br><span>W</span> - Diminui meio tom
+    <br><span>P</span> - Pausa a música
+    <br><span>R</span> - Reinicia a música
+    <br><span>ESQ</span> - Sai do programa do Karaokê
   </div>
-  <div class="instrucoes">
-    <strong>PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...</strong><br>
-    Veja o código correspondente e pressione enter no programa ↓
+
+  <div class="search-section">
+    <h2>Pesquise a música ou o cantor que deseja... Veja o código correspondente e pressione enter no programa</h2>
+    <input type="text" id="search" onkeyup="filtrar()" placeholder="Digite aqui...">
   </div>
-  <input type="text" id="search" placeholder="Digite aqui..." onkeyup="filtrar()" />
-  <table>
-    <thead>
-      <tr>
-        <th>Artista</th>
-        <th>Música</th>
-        <th>Código</th>
-      </tr>
-    </thead>
-    <tbody id="tabela"></tbody>
-  </table>
+
+  <div id="tabela"></div>
 
   <script>
     const musicas = [
@@ -176,22 +173,21 @@
 
 ];
 
- function filtrar() {
+   function filtrar() {
       const termo = document.getElementById("search").value.toLowerCase();
       const tabela = document.getElementById("tabela");
       tabela.innerHTML = "";
-      musicas
+      const musicasFiltradas = musicas
         .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
-        .sort((a, b) => a.artista.localeCompare(b.artista))
-        .forEach(m => {
-          tabela.innerHTML += `
-            <tr>
-              <td>${m.artista}</td>
-              <td>${m.musica}</td>
-              <td><span class="codigo">${m.codigo}</span></td>
-            </tr>
-          `;
+        .sort((a, b) => a.artista.localeCompare(b.artista));
+      if (musicasFiltradas.length) {
+        let html = '<table><tr><th>ARTISTA</th><th>MÚSICA</th><th>CÓDIGO</th></tr>';
+        musicasFiltradas.forEach(m => {
+          html += `<tr><td>${m.artista}</td><td>${m.musica}</td><td class="codigo">${m.codigo}</td></tr>`;
         });
+        html += '</table>';
+        tabela.innerHTML = html;
+      }
     }
 
     window.onload = filtrar;
