@@ -6,48 +6,84 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f4;
+      margin: 20px;
+      background-color: #f9f9f9;
+      color: #333;
     }
+
     h1 {
       text-align: center;
-      font-size: 2.5em;
+      color: #990000;
+      font-size: 36px;
+      margin-bottom: 5px;
     }
-    p {
+
+    .comandos {
       text-align: center;
-      font-size: 1em;
-      margin-bottom: 30px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 1.2em;
+      font-size: 14px;
       margin-bottom: 20px;
-    }
-    .letter-section {
-      margin-top: 30px;
-    }
-    .letter-section h2 {
-      background-color: #ddd;
+      background: #fff5f5;
       padding: 10px;
+      border: 1px solid #ffcccc;
       border-radius: 8px;
     }
-    .music-item {
-      padding: 5px 10px;
-      border-bottom: 1px solid #ccc;
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
     }
-    .music-item strong {
-      display: block;
+
+    .letra-grupo {
+      margin-top: 30px;
+    }
+
+    .letra-grupo h2 {
+      background-color: #ddd;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
   <h1>KARAOKE MOC</h1>
-  <p><strong>Comandos:</strong> S - Encerra a música atual e volta para a tela de digitar outra música; 
-    Q - Aumenta meio tom a música; W - Diminui meio tom; P - Pausa a música; R - Reinicia a Música; ESQ - Sai do programa do Karaoke.</p>
+  <div class="comandos">
+    Comandos:<br>
+    <strong>S</strong> - Encerra a música atual e volta para a tela de digitar outra música |
+    <strong>Q</strong> - Aumenta meio tom |
+    <strong>W</strong> - Diminui meio tom |
+    <strong>P</strong> - Pausa a música |
+    <strong>R</strong> - Reinicia a música |
+    <strong>ESQ</strong> - Sai do programa do Karaoke
+  </div>
 
-  <input type="text" id="search" placeholder="Digite o nome da música ou artista...">
-  <div id="results"></div>
+  <input type="text" id="searchInput" placeholder="Digite nome do artista, música ou código...">
+
+  <div id="resultado"></div>
 
   <script>
     const musicas = [
@@ -91,55 +127,54 @@
   { artista: "A Vigilia", musica: "Jesus Te Entronizamos", codigo: "05617" }
 ];
     
-function agruparPorLetra(lista) {
+const resultadoDiv = document.getElementById('resultado');
+    const searchInput = document.getElementById('searchInput');
+
+    function agruparPorLetra(lista) {
       const grupos = {};
-      lista.forEach(({ artista, musica, codigo }) => {
-        const letra = artista[0].toUpperCase();
+      lista.forEach(item => {
+        const letra = item.artista[0].toUpperCase();
         if (!grupos[letra]) grupos[letra] = [];
-        grupos[letra].push({ artista, musica, codigo });
+        grupos[letra].push(item);
       });
       return grupos;
     }
 
-    function exibirMusicas(grupos, filtro = '') {
-      const container = document.getElementById('results');
-      container.innerHTML = '';
-      const letras = Object.keys(grupos).sort();
-
-      letras.forEach(letra => {
-        const grupo = grupos[letra].filter(m => {
-          const busca = filtro.toLowerCase();
-          return m.artista.toLowerCase().includes(busca) || m.musica.toLowerCase().includes(busca);
-        });
-
-        if (grupo.length > 0) {
-          const secao = document.createElement('div');
-          secao.className = 'letter-section';
-
-          const titulo = document.createElement('h2');
-          titulo.textContent = letra;
-          secao.appendChild(titulo);
-
-          grupo.sort((a, b) => a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica));
-
-          grupo.forEach(({ artista, musica, codigo }) => {
-            const item = document.createElement('div');
-            item.className = 'music-item';
-            item.innerHTML = `<strong>${artista}</strong>${musica} — <code>${codigo}</code>`;
-            secao.appendChild(item);
-          });
-
-          container.appendChild(secao);
-        }
+    function criarTabela(lista) {
+      let html = '<table><thead><tr><th>Artista</th><th>Música</th><th>Código</th></tr></thead><tbody>';
+      lista.forEach(item => {
+        html += `<tr><td>${item.artista}</td><td>${item.musica}</td><td>${item.codigo}</td></tr>`;
       });
+      html += '</tbody></table>';
+      return html;
     }
 
-    const grupos = agruparPorLetra(musicas);
-    exibirMusicas(grupos);
+    function exibirMusicas(filtro = '') {
+      const filtroLower = filtro.toLowerCase();
+      const filtradas = musicas.filter(m =>
+        m.artista.toLowerCase().includes(filtroLower) ||
+        m.musica.toLowerCase().includes(filtroLower) ||
+        m.codigo.includes(filtroLower)
+      );
 
-    document.getElementById('search').addEventListener('input', function () {
-      exibirMusicas(grupos, this.value);
+      const grupos = agruparPorLetra(filtradas);
+      let html = '';
+
+      Object.keys(grupos).sort().forEach(letra => {
+        html += `<div class="letra-grupo"><h2>${letra}</h2>`;
+        html += criarTabela(grupos[letra]);
+        html += `</div>`;
+      });
+
+      resultadoDiv.innerHTML = html || "<p>Nenhum resultado encontrado.</p>";
+    }
+
+    searchInput.addEventListener('input', () => {
+      exibirMusicas(searchInput.value);
     });
+
+    // Mostrar tudo inicialmente
+    exibirMusicas();
   </script>
 </body>
 </html>
