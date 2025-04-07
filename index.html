@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Busca de Músicas para Karaokê</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    input {
+      display: block;
+      margin: 0 auto 2rem;
+      padding: 10px;
+      font-size: 1rem;
+      width: 80%;
+      max-width: 500px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    @media (max-width: 600px) {
+      td, th {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Busca de Músicas</h1>
+  <input type="text" id="searchInput" placeholder="Digite artista, música ou código...">
+
+  <table id="musicTable">
+    <thead>
+      <tr>
+        <th>Artista</th>
+        <th>Música</th>
+        <th>Código</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Os dados serão inseridos aqui -->
+    </tbody>
+  </table>
+
+  <script>
+    const musicas = [
+      { artista: "10,000 Maniacs", musica: "More Than This", codigo: "19807" },
+      { artista: "14 Bis", musica: "Bola De Meia Bola De Gude", codigo: "01039" },
+      { artista: "14 Bis", musica: "Linda Juventude", codigo: "03755" },
+      { artista: "14 Bis", musica: "Natural", codigo: "07392" },
+      { artista: "14 Bis", musica: "Planeta Sonho", codigo: "06074" },
+      { artista: "14 Bis", musica: "Romance", codigo: "07693" },
+      { artista: "14 Bis", musica: "Todo Azul Do Mar", codigo: "06197" },
+      { artista: "14 Bis", musica: "Uma Velha Canção Rock'n'roll", codigo: "09556" },
+      { artista: "3 Doors Down", musica: "Here Without You", codigo: "09033" },
+      { artista: "30 Seconds To Mars", musica: "The Kill Bury Me", codigo: "20379" },
+      { artista: "4 Non Blondes", musica: "Spaceman", codigo: "02578" },
+      { artista: "4 Non Blondes", musica: "What's Up", codigo: "09072" },
+      { artista: "5 A Seco - Maria Gadu", musica: "Em Paz", codigo: "15225" },
+      { artista: "5 Seconds Of Summer", musica: "Complete Mess", codigo: "20533" },
+      { artista: "5 Seconds Of Summer", musica: "She Looks So Perfect", codigo: "19852" },
+      // Adicione mais aqui ou automatize via script
+    ];
+
+    const input = document.getElementById("searchInput");
+    const tableBody = document.getElementById("tableBody");
+
+    function renderTable(data) {
+      tableBody.innerHTML = "";
+      data.forEach(m => {
+        const row = `<tr><td>${m.artista}</td><td>${m.musica}</td><td>${m.codigo}</td></tr>`;
+        tableBody.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    input.addEventListener("input", () => {
+      const search = input.value.toLowerCase();
+      const filtered = musicas.filter(m =>
+        m.artista.toLowerCase().includes(search) ||
+        m.musica.toLowerCase().includes(search) ||
+        m.codigo.includes(search)
+      );
+      renderTable(filtered);
+    });
+
+    renderTable(musicas);
+  </script>
+</body>
+</html>
