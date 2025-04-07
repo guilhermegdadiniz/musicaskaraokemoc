@@ -1,76 +1,90 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KARAOKEMOC</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f0f0;
+      background-color: #f2f2f2;
       margin: 0;
       padding: 20px;
       text-align: center;
-      font-size: 18px;
     }
     h1 {
-      color: #007bff;
-      font-size: 48px;
+      color: #0047ab;
+      font-size: 3em;
       margin-bottom: 10px;
     }
-    .search-label {
-      font-size: 24px;
-      color: #007bff;
-      margin-bottom: 20px;
+    .comandos {
+      font-size: 1.2em;
+      margin: 20px 0 10px;
+    }
+    .comandos span {
+      color: #0047ab;
+      font-weight: bold;
+      font-size: 1.3em;
+      margin: 0 5px;
+    }
+    .arrow {
+      font-size: 2em;
+      color: #0047ab;
       display: block;
+      margin-bottom: 10px;
+    }
+    .instrucoes {
+      font-size: 1.4em;
+      color: #0047ab;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
     input[type="text"] {
-      width: 80%;
       padding: 10px;
-      font-size: 20px;
-      margin-bottom: 30px;
+      width: 80%;
+      font-size: 1.2em;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 20px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      font-size: 18px;
+      font-size: 1.1em;
     }
     th, td {
-      padding: 12px;
-      border-bottom: 1px solid #ccc;
+      border: 1px solid #ddd;
+      padding: 10px;
       text-align: left;
     }
-    .codigo {
-      font-size: 22px;
+    th {
+      background-color: #0047ab;
       color: white;
-      background-color: #007bff;
+    }
+    .codigo {
+      font-size: 1.2em;
+      color: white;
+      background-color: #0047ab;
       padding: 5px 10px;
       border-radius: 5px;
       display: inline-block;
-    }
-    .comandos {
-      margin-top: 40px;
-      font-size: 20px;
-      text-align: left;
-      display: inline-block;
-    }
-    .comandos span {
-      color: #007bff;
-      font-weight: bold;
-      font-size: 22px;
     }
   </style>
 </head>
 <body>
   <h1>KARAOKEMOC</h1>
-  <label class="search-label">
-    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...<br>
-    VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA ➜
-  </label>
-  <input type="text" id="search" placeholder="Digite o nome do artista ou da música..." oninput="filtrar()"/>
+  <div class="comandos">
+    <strong>COMANDOS:</strong> <span>S</span> Encerra a música atual e volta para a tela de digitar outra música <br>
+    <span>Q</span> Aumenta meio tom a música <span>W</span> Diminui meio tom <span>P</span> Pausa a música <span>R</span> Reinicia a música <span>ESQ</span> Sai do programa do Karaoke
+  </div>
+  <div class="arrow">⬇</div>
+  <div class="instrucoes">
+    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA... VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA
+  </div>
+  <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Digite o nome do artista ou da música">
 
-  <table>
+  <table id="musicTable">
     <thead>
       <tr>
         <th>ARTISTA</th>
@@ -78,19 +92,10 @@
         <th>CÓDIGO</th>
       </tr>
     </thead>
-    <tbody id="tabela">
-      <!-- Dados preenchidos via script -->
+    <tbody id="tableBody">
+      <!-- Os dados são inseridos aqui via JavaScript -->
     </tbody>
   </table>
-
-  <div class="comandos">
-    <p><strong>COMANDOS:</strong> <span>S</span> - Encerra a música atual e volta para a tela de digitar outra música</p>
-    <p><span>Q</span> - Aumenta meio tom a música</p>
-    <p><span>W</span> - Diminui meio tom</p>
-    <p><span>P</span> - Pausa a música</p>
-    <p><span>R</span> - Reinicia a música</p>
-    <p><span>ESQ</span> - Sai do programa do Karaoke</p>
-  </div>
 
   <script>
     const musicas = [
@@ -177,6 +182,33 @@
 { artista: "Adhemar De Campos", musica: "Nosso General", codigo: "02986" },
 
 ];
+
+ musicas.sort((a, b) => a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica));
+
+    const tableBody = document.getElementById("tableBody");
+    musicas.forEach(m => {
+      const row = `<tr><td>${m.artista}</td><td>${m.musica}</td><td><span class="codigo">${m.codigo}</span></td></tr>`;
+      tableBody.innerHTML += row;
+    });
+
+    function searchTable() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const rows = tableBody.getElementsByTagName("tr");
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        const artista = cells[0].textContent.toLowerCase();
+        const musica = cells[1].textContent.toLowerCase();
+        if (artista.includes(input) || musica.includes(input)) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
+
     
 function filtrar() {
       const termo = document.getElementById("search").value.toLowerCase();
