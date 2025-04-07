@@ -1,69 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Catálogo de Músicas para Karaokê</title>
+  <meta charset="UTF-8">
+  <title>KARAOKE MOC</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f0f2f5;
-      padding: 30px;
-      color: #333;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
     }
-
     h1 {
       text-align: center;
+      font-size: 2.5em;
+    }
+    p {
+      text-align: center;
+      font-size: 1em;
       margin-bottom: 30px;
     }
-
     input[type="text"] {
       width: 100%;
-      padding: 15px;
-      font-size: 16px;
-      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    .letter-section {
+      margin-top: 30px;
+    }
+    .letter-section h2 {
+      background-color: #ddd;
+      padding: 10px;
       border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
     }
-
-    .card {
-      background-color: #fff;
-      padding: 15px 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 15px;
-      transition: transform 0.2s;
-    }
-
-    .card:hover {
-      transform: scale(1.01);
-    }
-
-    .musica {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .artista {
-      color: #666;
-    }
-
-    .codigo {
-      float: right;
-      background: #0077cc;
-      color: #fff;
+    .music-item {
       padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 14px;
+      border-bottom: 1px solid #ccc;
+    }
+    .music-item strong {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <h1>Catálogo de Músicas para Karaokê</h1>
-  <input type="text" id="busca" placeholder="Buscar por artista, música ou código..." oninput="filtrar()"/>
+  <h1>KARAOKE MOC</h1>
+  <p><strong>Comandos:</strong> S - Encerra a música atual e volta para a tela de digitar outra música; 
+    Q - Aumenta meio tom a música; W - Diminui meio tom; P - Pausa a música; R - Reinicia a Música; ESQ - Sai do programa do Karaoke.</p>
 
-  <div id="resultados"></div>
+  <input type="text" id="search" placeholder="Digite o nome da música ou artista...">
+  <div id="results"></div>
 
   <script>
     const musicas = [
@@ -106,33 +90,56 @@
   { artista: "A Vigilia", musica: "Jeova E O Teu Cavaleiro", codigo: "05614" },
   { artista: "A Vigilia", musica: "Jesus Te Entronizamos", codigo: "05617" }
 ];
+    
+function agruparPorLetra(lista) {
+      const grupos = {};
+      lista.forEach(({ artista, musica, codigo }) => {
+        const letra = artista[0].toUpperCase();
+        if (!grupos[letra]) grupos[letra] = [];
+        grupos[letra].push({ artista, musica, codigo });
+      });
+      return grupos;
+    }
 
-    function filtrar() {
-      const termo = document.getElementById('busca').value.toLowerCase();
-      const resultados = document.getElementById('resultados');
-      resultados.innerHTML = '';
+    function exibirMusicas(grupos, filtro = '') {
+      const container = document.getElementById('results');
+      container.innerHTML = '';
+      const letras = Object.keys(grupos).sort();
 
-      const encontrados = musicas.filter(m =>
-        m.artista.toLowerCase().includes(termo) ||
-        m.musica.toLowerCase().includes(termo) ||
-        m.codigo.includes(termo)
-      );
+      letras.forEach(letra => {
+        const grupo = grupos[letra].filter(m => {
+          const busca = filtro.toLowerCase();
+          return m.artista.toLowerCase().includes(busca) || m.musica.toLowerCase().includes(busca);
+        });
 
-      if (encontrados.length === 0) {
-        resultados.innerHTML = '<p>Nenhuma música encontrada.</p>';
-        return;
-      }
+        if (grupo.length > 0) {
+          const secao = document.createElement('div');
+          secao.className = 'letter-section';
 
-      encontrados.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-          <div class="musica">${m.musica} <span class="codigo">${m.codigo}</span></div>
-          <div class="artista">${m.artista}</div>
-        `;
-        resultados.appendChild(div);
+          const titulo = document.createElement('h2');
+          titulo.textContent = letra;
+          secao.appendChild(titulo);
+
+          grupo.sort((a, b) => a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica));
+
+          grupo.forEach(({ artista, musica, codigo }) => {
+            const item = document.createElement('div');
+            item.className = 'music-item';
+            item.innerHTML = `<strong>${artista}</strong>${musica} — <code>${codigo}</code>`;
+            secao.appendChild(item);
+          });
+
+          container.appendChild(secao);
+        }
       });
     }
+
+    const grupos = agruparPorLetra(musicas);
+    exibirMusicas(grupos);
+
+    document.getElementById('search').addEventListener('input', function () {
+      exibirMusicas(grupos, this.value);
+    });
   </script>
 </body>
 </html>
