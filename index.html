@@ -1,86 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Karaokê MOC</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KARAOKEMOC</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 0;
       padding: 20px;
-      background-color: #f9f9f9;
-      color: #333;
+      text-align: center;
       font-size: 18px;
     }
     h1 {
-      text-align: center;
-      color: #0056b3;
-      font-size: 36px;
-    }
-    h2 {
-      font-size: 22px;
+      color: #007bff;
+      font-size: 48px;
       margin-bottom: 10px;
-      color: #0056b3;
+    }
+    .search-label {
+      font-size: 24px;
+      color: #007bff;
+      margin-bottom: 20px;
+      display: block;
     }
     input[type="text"] {
-      width: 100%;
-      padding: 12px;
+      width: 80%;
+      padding: 10px;
       font-size: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-    .comandos {
-      margin-top: 30px;
-      background-color: #e0f0ff;
-      padding: 15px;
-      border-left: 5px solid #0056b3;
-      font-size: 20px;
-    }
-    .comandos span {
-      font-size: 22px;
-      color: #0056b3;
-      font-weight: bold;
+      margin-bottom: 30px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-    }
-    th, td {
-      padding: 12px 10px;
-      text-align: left;
-      border-bottom: 1px solid #ccc;
       font-size: 18px;
     }
-    th {
-      background-color: #0056b3;
-      color: white;
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
     }
     .codigo {
-      font-size: 20px;
-      font-weight: bold;
+      font-size: 22px;
       color: white;
-      background-color: #0056b3;
+      background-color: #007bff;
       padding: 5px 10px;
       border-radius: 5px;
       display: inline-block;
     }
+    .comandos {
+      margin-top: 40px;
+      font-size: 20px;
+      text-align: left;
+      display: inline-block;
+    }
+    .comandos span {
+      color: #007bff;
+      font-weight: bold;
+      font-size: 22px;
+    }
   </style>
 </head>
 <body>
-  <h1>KARAOKE MOC</h1>
-  <h2>PESQUISE A MÚSICA OU O CANTOR QUE DESEJA... VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA</h2>
-  <input type="text" id="searchInput" placeholder="Digite aqui..." onkeyup="buscar()">
-  <div class="comandos">
-    <strong>COMANDOS:</strong><br>
-    <span>S</span> - Encerra a música atual e volta para a tela de digitar outra música<br>
-    <span>Q</span> - Aumenta meio tom a música<br>
-    <span>W</span> - Diminui meio tom<br>
-    <span>P</span> - Pausa a música<br>
-    <span>R</span> - Reinicia a música<br>
-    <span>ESQ</span> - Sai do programa do Karaokê
-  </div>
-  <table id="tabela">
+  <h1>KARAOKEMOC</h1>
+  <label class="search-label">
+    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...<br>
+    VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA ➜
+  </label>
+  <input type="text" id="search" placeholder="Digite o nome do artista ou da música..." oninput="filtrar()"/>
+
+  <table>
     <thead>
       <tr>
         <th>ARTISTA</th>
@@ -88,8 +78,20 @@
         <th>CÓDIGO</th>
       </tr>
     </thead>
-    <tbody id="lista"></tbody>
+    <tbody id="tabela">
+      <!-- Dados preenchidos via script -->
+    </tbody>
   </table>
+
+  <div class="comandos">
+    <p><strong>COMANDOS:</strong> <span>S</span> - Encerra a música atual e volta para a tela de digitar outra música</p>
+    <p><span>Q</span> - Aumenta meio tom a música</p>
+    <p><span>W</span> - Diminui meio tom</p>
+    <p><span>P</span> - Pausa a música</p>
+    <p><span>R</span> - Reinicia a música</p>
+    <p><span>ESQ</span> - Sai do programa do Karaoke</p>
+  </div>
+
   <script>
     const musicas = [
   { artista: "19", musica: "Ano Kami Hikohki Kumorizora", codigo: "18483" },
@@ -176,28 +178,24 @@
 
 ];
     
- function buscar() {
-      const termo = document.getElementById("searchInput").value.toLowerCase();
-      const resultado = musicas.filter(m =>
-        m.artista.toLowerCase().includes(termo) ||
-        m.musica.toLowerCase().includes(termo) ||
-        m.codigo.includes(termo)
-      );
-      exibir(resultado);
+function filtrar() {
+      const termo = document.getElementById("search").value.toLowerCase();
+      const tabela = document.getElementById("tabela");
+      tabela.innerHTML = "";
+      musicas
+        .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
+        .forEach(m => {
+          tabela.innerHTML += `
+            <tr>
+              <td>${m.artista}</td>
+              <td>${m.musica}</td>
+              <td><span class="codigo">${m.codigo}</span></td>
+            </tr>
+          `;
+        });
     }
 
-    function exibir(lista) {
-      const listaHTML = lista.map(m => `
-        <tr>
-          <td>${m.artista}</td>
-          <td>${m.musica}</td>
-          <td><span class="codigo">${m.codigo}</span></td>
-        </tr>
-      `).join("");
-      document.getElementById("lista").innerHTML = listaHTML;
-    }
-
-    exibir(musicas);
+    window.onload = filtrar;
   </script>
 </body>
 </html>
