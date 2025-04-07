@@ -9,63 +9,68 @@
       font-family: Arial, sans-serif;
       background-color: #f2f2f2;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       text-align: center;
+      color: #333;
     }
     h1 {
-      color: #0047ab;
-      font-size: 3em;
-      margin-bottom: 10px;
+      font-size: 48px;
+      color: blue;
+      margin-top: 20px;
     }
     .comandos {
-      font-size: 1.2em;
-      margin: 20px 0 10px;
+      font-size: 18px;
+      margin: 10px auto 20px;
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
     }
     .comandos span {
-      color: #0047ab;
+      color: blue;
+      font-size: 20px;
       font-weight: bold;
-      font-size: 1.3em;
-      margin: 0 5px;
-    }
-    .arrow {
-      font-size: 2em;
-      color: #0047ab;
-      display: block;
-      margin-bottom: 10px;
     }
     .instrucoes {
-      font-size: 1.4em;
-      color: #0047ab;
-      font-weight: bold;
-      margin-bottom: 10px;
+      font-size: 24px;
+      color: blue;
+      margin: 20px auto;
+      max-width: 800px;
+      line-height: 1.5;
     }
-    input[type="text"] {
+    #search {
       padding: 10px;
-      width: 80%;
-      font-size: 1.2em;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      font-size: 20px;
+      width: 60%;
       margin-bottom: 20px;
     }
+    .grupo-letra {
+      text-align: left;
+      margin: 20px auto;
+      max-width: 800px;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
     table {
-      width: 100%;
+      margin: 0 auto;
+      width: 90%;
+      max-width: 1000px;
       border-collapse: collapse;
-      margin-top: 20px;
-      font-size: 1.1em;
+      font-size: 20px;
     }
     th, td {
-      border: 1px solid #ddd;
       padding: 10px;
+      border-bottom: 1px solid #ddd;
       text-align: left;
     }
     th {
-      background-color: #0047ab;
-      color: white;
+      background-color: #eee;
     }
     .codigo {
-      font-size: 1.2em;
+      background-color: blue;
       color: white;
-      background-color: #0047ab;
+      font-size: 22px;
       padding: 5px 10px;
       border-radius: 5px;
       display: inline-block;
@@ -74,28 +79,23 @@
 </head>
 <body>
   <h1>KARAOKEMOC</h1>
-  <div class="comandos">
-    <strong>COMANDOS:</strong> <span>S</span> Encerra a música atual e volta para a tela de digitar outra música <br>
-    <span>Q</span> Aumenta meio tom a música <span>W</span> Diminui meio tom <span>P</span> Pausa a música <span>R</span> Reinicia a música <span>ESQ</span> Sai do programa do Karaoke
-  </div>
-  <div class="arrow">⬇</div>
-  <div class="instrucoes">
-    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA... VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA
-  </div>
-  <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Digite o nome do artista ou da música">
 
-  <table id="musicTable">
-    <thead>
-      <tr>
-        <th>ARTISTA</th>
-        <th>MÚSICA</th>
-        <th>CÓDIGO</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-      <!-- Os dados são inseridos aqui via JavaScript -->
-    </tbody>
-  </table>
+  <div class="comandos">
+    <strong>COMANDOS:</strong> <span>S</span> - Encerra a música atual e volta para a tela de digitar outra música &nbsp;&nbsp; 
+    <span>Q</span> - Aumenta meio tom a música &nbsp;&nbsp; 
+    <span>W</span> - Diminui meio tom &nbsp;&nbsp; 
+    <span>P</span> - Pausa a música &nbsp;&nbsp; 
+    <span>R</span> - Reinicia a música &nbsp;&nbsp; 
+    <span>ESQ</span> - Sai do programa ↓
+  </div>
+
+  <div class="instrucoes">
+    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA... VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA ↓
+  </div>
+
+  <input type="text" id="search" oninput="filtrar()" placeholder="Digite o nome do artista ou música">
+
+  <div id="tabela"></div>
 
   <script>
     const musicas = [
@@ -183,37 +183,37 @@
 
 ];
 
- musicas.sort((a, b) => a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica));
+ function filtrar() {
+      const termo = document.getElementById("search").value.toLowerCase();
+      const tabela = document.getElementById("tabela");
+      tabela.innerHTML = "";
 
-    const tableBody = document.getElementById("tableBody");
-    musicas.forEach(m => {
-      const row = `<tr><td>${m.artista}</td><td>${m.musica}</td><td><span class="codigo">${m.codigo}</span></td></tr>`;
-      tableBody.innerHTML += row;
-    });
+      const filtradas = musicas
+        .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
+        .sort((a, b) => a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica));
 
-    function searchTable() {
-      const input = document.getElementById("searchInput").value.toLowerCase();
-      const rows = tableBody.getElementsByTagName("tr");
-      for (let i = 0; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName("td");
-        const artista = cells[0].textContent.toLowerCase();
-        const musica = cells[1].textContent.toLowerCase();
-        if (artista.includes(input) || musica.includes(input)) {
-          rows[i].style.display = "";
-        } else {
-          rows[i].style.display = "none";
+      let letraAtual = "";
+
+      filtradas.forEach(m => {
+        const primeiraLetra = m.artista[0].toUpperCase();
+        if (primeiraLetra !== letraAtual) {
+          letraAtual = primeiraLetra;
+          tabela.innerHTML += `<div class='grupo-letra'>Letra ${letraAtual}</div>`;
+          tabela.innerHTML += `<table><tr><th>ARTISTA</th><th>MÚSICA</th><th>CÓDIGO</th></tr>`;
         }
+        tabela.innerHTML += `<tr><td>${m.artista}</td><td>${m.musica}</td><td><span class='codigo'>${m.codigo}</span></td></tr>`;
+      });
+
+      if (filtradas.length > 0) {
+        tabela.innerHTML += "</table>";
       }
     }
+
+    window.onload = filtrar;
   </script>
 </body>
 </html>
 
-    
-function filtrar() {
-      const termo = document.getElementById("search").value.toLowerCase();
-      const tabela = document.getElementById("tabela");
-      tabela.innerHTML = "";
       musicas
         .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
         .forEach(m => {
