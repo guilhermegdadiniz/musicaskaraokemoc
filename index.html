@@ -1,89 +1,114 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KARAOKEMOC</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
       padding: 20px;
-      font-size: 16px;
+      background-color: #f4f4f4;
+      color: #333;
     }
+
     h1 {
       text-align: center;
       color: blue;
-      font-size: 40px;
+      font-size: 36px;
       margin-bottom: 10px;
     }
+
     .comandos {
-      font-size: 16px;
-      margin-bottom: 20px;
+      font-size: 18px;
+      margin-bottom: 30px;
+      text-align: center;
       line-height: 1.6;
     }
-    .comandos span {
-      color: blue;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .search-section {
-      text-align: center;
-      margin: 20px 0;
-    }
-    .search-section h2 {
+
+    .comandos b {
       color: blue;
       font-size: 20px;
+    }
+
+    .search-instruction {
+      font-size: 22px;
+      color: blue;
+      text-align: center;
       margin-bottom: 10px;
     }
+
     #search {
-      width: 80%;
+      display: block;
+      margin: 0 auto 20px auto;
       padding: 10px;
-      font-size: 16px;
+      font-size: 18px;
+      width: 80%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-    table {
+
+    .tabela {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
-      font-size: 16px;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid #ccc;
-    }
-    .codigo {
-      color: white;
-      background: blue;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-weight: bold;
       font-size: 18px;
     }
-    .letra-header {
+
+    .tabela th, .tabela td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    .codigo {
+      background-color: blue;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+
+    .grupo-letra {
       font-size: 22px;
-      margin-top: 30px;
-      color: #444;
+      color: #555;
+      margin-top: 40px;
+      margin-bottom: 10px;
       border-bottom: 2px solid #ccc;
+    }
+
+    .linha-musica {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      margin-bottom: 10px;
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
+
   <h1>KARAOKEMOC</h1>
+
   <div class="comandos">
-    <strong>COMANDOS:</strong>
-    <br><span>S</span> - Encerra a música atual e volta para a tela de digitar outra música
-    <br><span>Q</span> - Aumenta meio tom a música
-    <br><span>W</span> - Diminui meio tom
-    <br><span>P</span> - Pausa a música
-    <br><span>R</span> - Reinicia a música
-    <br><span>ESQ</span> - Sai do programa do Karaokê
+    <div><b>COMANDOS:</b></div>
+    <div><b>S</b> - Encerra a música atual e volta para a tela de digitar outra música</div>
+    <div><b>Q</b> - Aumenta meio tom a música</div>
+    <div><b>W</b> - Diminui meio tom</div>
+    <div><b>P</b> - Pausa a música</div>
+    <div><b>R</b> - Reinicia a música</div>
+    <div><b>ESQ</b> - Sai do programa do Karaoke</div>
   </div>
 
-  <div class="search-section">
-    <h2>Pesquise a música ou o cantor que deseja... Veja o código correspondente e pressione enter no programa</h2>
-    <input type="text" id="search" onkeyup="filtrar()" placeholder="Digite aqui...">
+  <div class="search-instruction">
+    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...<br>
+    VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA
   </div>
+
+  <input type="text" id="search" oninput="filtrar()" placeholder="Digite o nome da música ou artista..."/>
 
   <div id="tabela"></div>
 
@@ -172,22 +197,33 @@
 { artista: "Adhemar De Campos", musica: "Nosso General", codigo: "02986" },
 
 ];
-
-   function filtrar() {
+ function filtrar() {
       const termo = document.getElementById("search").value.toLowerCase();
       const tabela = document.getElementById("tabela");
       tabela.innerHTML = "";
-      const musicasFiltradas = musicas
+
+      const agrupadas = {};
+
+      musicas
         .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
-        .sort((a, b) => a.artista.localeCompare(b.artista));
-      if (musicasFiltradas.length) {
-        let html = '<table><tr><th>ARTISTA</th><th>MÚSICA</th><th>CÓDIGO</th></tr>';
-        musicasFiltradas.forEach(m => {
-          html += `<tr><td>${m.artista}</td><td>${m.musica}</td><td class="codigo">${m.codigo}</td></tr>`;
+        .sort((a, b) => a.artista.localeCompare(b.artista))
+        .forEach(m => {
+          const letra = m.artista.charAt(0).toUpperCase();
+          if (!agrupadas[letra]) agrupadas[letra] = [];
+          agrupadas[letra].push(m);
         });
-        html += '</table>';
-        tabela.innerHTML = html;
-      }
+
+      Object.keys(agrupadas).sort().forEach(letra => {
+        tabela.innerHTML += `<div class="grupo-letra">Letra ${letra}</div>`;
+        agrupadas[letra].forEach(m => {
+          tabela.innerHTML += `
+            <div class="linha-musica">
+              <div>${m.artista}</div>
+              <div>${m.musica}</div>
+              <div class="codigo">${m.codigo}</div>
+            </div>`;
+        });
+      });
     }
 
     window.onload = filtrar;
