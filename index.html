@@ -1,79 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>KARAOKE MOC</title>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #fff;
-      padding: 40px;
-      font-size: 24px;
-      color: #222;
+      background-color: #f2f2f2;
+      font-size: 22px;
+      padding: 20px;
     }
 
     h1 {
       text-align: center;
-      font-size: 56px;
-      margin-bottom: 20px;
+      color: #000;
+      font-size: 40px;
+      margin-bottom: 5px;
     }
 
-    .instrucoes {
-      font-size: 28px;
-      margin-bottom: 20px;
+    .comandos-titulo {
+      text-align: center;
+      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 10px;
     }
 
     .comandos {
-      text-align: left;
-      font-size: 28px;
-      margin-bottom: 30px;
+      text-align: center;
+      color: #000;
+      font-size: 18px;
+      margin-bottom: 25px;
     }
 
     .comandos b {
+      color: #000;
+      background-color: #dcdcdc;
+      padding: 2px 6px;
+      border-radius: 5px;
+    }
+
+    .instrucoes {
+      color: blue;
+      text-align: center;
+      font-size: 20px;
       font-weight: bold;
-      color: #fff;
-      background: #333;
-      padding: 2px 8px;
-      border-radius: 6px;
-      margin: 0 4px;
-      display: inline-block;
+      margin-bottom: 20px;
     }
 
     #search {
       width: 100%;
-      padding: 20px;
-      font-size: 28px;
-      border: 2px solid #aaa;
-      border-radius: 6px;
-      margin-bottom: 30px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 26px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 16px;
+      padding: 15px;
+      font-size: 20px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      margin-bottom: 30px;
+      box-sizing: border-box;
     }
 
-    th {
-      background-color: #444;
-      color: white;
-      font-size: 28px;
+    .letra-grupo {
+      margin-bottom: 20px;
     }
 
-    td.codigo {
-      font-size: 32px;
+    .letra-titulo {
+      font-size: 20px;
       font-weight: bold;
-      color: #111;
+      color: #333;
+      margin-bottom: 10px;
     }
 
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
+    .card {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .codigo {
+      background-color: blue;
+      color: white;
+      padding: 8px 12px;
+      font-weight: bold;
+      border-radius: 6px;
+      font-size: 22px;
+      min-width: 80px;
+      text-align: center;
     }
   </style>
 </head>
@@ -81,12 +97,10 @@
 
   <h1>KARAOKE MOC</h1>
 
-  <div class="instrucoes">
-    Pesquise a Música ou o Cantor que deseja... Veja o código correspondente e pressione enter no programa...
-  </div>
+  <div class="comandos-titulo">Comandos do Karaoke...</div>
 
   <div class="comandos">
-    Comandos: <b>S</b> Encerra a música atual e volta para digitar outra • 
+    <b>S</b> Encerra a música atual e volta para digitar outra • 
     <b>Q</b> Aumenta meio tom • 
     <b>W</b> Diminui meio tom • 
     <b>P</b> Pausa a música • 
@@ -94,19 +108,15 @@
     <b>ESQ</b> Sai do programa do Karaokê
   </div>
 
+  <div class="instrucoes">
+    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...<br />
+    VEJA O CÓDIGO CORRESPONDENTE À MÚSICA E PRESSIONE A TECLA ENTER...
+  </div>
+
   <input type="text" id="search" placeholder="Digite artista, música ou código...">
 
-  <table id="results" style="display:none;">
-    <thead>
-      <tr>
-        <th>Artista</th>
-        <th>Música</th>
-        <th>Código</th>
-      </tr>
-    </thead>
-    <tbody id="table-body"></tbody>
-  </table>
-  
+  <div id="resultados"></div>
+
   <script>
     const musicas = [
   { artista: "19", musica: "Ano Kami Hikohki Kumorizora", codigo: "18483" },
@@ -1773,34 +1783,61 @@
 { artista: "Bruno Mars", musica: "It Will Rain", codigo: "19009" },
 { artista: "Bruno Mars", musica: "Just The Way You Are", codigo: "19036" }
 ];
- document.getElementById('search').addEventListener('input', function () {
-      const termo = this.value.toLowerCase();
-      const filtradas = musicas.filter(m =>
-        m.artista.toLowerCase().includes(termo) ||
-        m.musica.toLowerCase().includes(termo) ||
-        m.codigo.includes(termo)
-      );
+    
+const container = document.getElementById('resultados');
+    const input = document.getElementById('search');
 
-      const tbody = document.getElementById('table-body');
-      const tabela = document.getElementById('results');
-      tbody.innerHTML = '';
-
-      if (filtradas.length === 0 || termo.length < 1) {
-        tabela.style.display = 'none';
-        return;
-      }
-
-      filtradas.forEach(m => {
-        const row = `<tr>
-          <td>${m.artista}</td>
-          <td>${m.musica}</td>
-          <td class="codigo">${m.codigo}</td>
-        </tr>`;
-        tbody.innerHTML += row;
+    function atualizarLista(filtro = '') {
+      const filtradas = musicas.filter(m => {
+        const termo = filtro.toLowerCase();
+        return (
+          m.artista.toLowerCase().includes(termo) ||
+          m.musica.toLowerCase().includes(termo) ||
+          m.codigo.includes(termo)
+        );
       });
 
-      tabela.style.display = 'table';
-    });
+      const porLetra = {};
+
+      filtradas.forEach(m => {
+        const letra = m.artista.charAt(0).toUpperCase();
+        if (!porLetra[letra]) porLetra[letra] = [];
+        porLetra[letra].push(m);
+      });
+
+      container.innerHTML = '';
+
+      Object.keys(porLetra).sort().forEach(letra => {
+        const grupo = document.createElement('div');
+        grupo.classList.add('letra-grupo');
+
+        const titulo = document.createElement('div');
+        titulo.classList.add('letra-titulo');
+        titulo.textContent = `Letra ${letra}`;
+        grupo.appendChild(titulo);
+
+        porLetra[letra].forEach(m => {
+          const card = document.createElement('div');
+          card.classList.add('card');
+
+          card.innerHTML = `
+            <div>
+              <div><strong>${m.artista}</strong></div>
+              <div>${m.musica}</div>
+            </div>
+            <div class="codigo">${m.codigo}</div>
+          `;
+
+          grupo.appendChild(card);
+        });
+
+        container.appendChild(grupo);
+      });
+    }
+
+    input.addEventListener('input', () => atualizarLista(input.value));
+
+    atualizarLista(); // Inicial
   </script>
 
 </body>
