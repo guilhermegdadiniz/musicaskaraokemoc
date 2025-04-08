@@ -1,117 +1,56 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KARAOKEMOC</title>
+  <meta charset="UTF-8">
+  <title>Busca de Músicas</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background-color: #f4f4f4;
-      color: #333;
+      background-color: #f0f0f0;
     }
-
     h1 {
       text-align: center;
-      color: blue;
-      font-size: 36px;
-      margin-bottom: 10px;
     }
-
-    .comandos {
-      font-size: 18px;
-      margin-bottom: 30px;
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    .comandos b {
-      color: blue;
-      font-size: 20px;
-    }
-
-    .search-instruction {
-      font-size: 22px;
-      color: blue;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    #search {
-      display: block;
-      margin: 0 auto 20px auto;
+    input[type="text"] {
+      width: 100%;
       padding: 10px;
-      font-size: 18px;
-      width: 80%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      font-size: 16px;
+      margin: 20px 0;
     }
-
-    .tabela {
+    table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 18px;
+      display: none;
     }
-
-    .tabela th, .tabela td {
-      padding: 10px;
-      text-align: left;
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
     }
-
-    .codigo {
-      background-color: blue;
+    th {
+      background-color: #333;
       color: white;
-      font-size: 20px;
-      font-weight: bold;
-      padding: 5px 10px;
-      border-radius: 5px;
-      display: inline-block;
     }
-
-    .grupo-letra {
-      font-size: 22px;
-      color: #555;
-      margin-top: 40px;
-      margin-bottom: 10px;
-      border-bottom: 2px solid #ccc;
-    }
-
-    .linha-musica {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 10px;
-      margin-bottom: 10px;
-      background: #fff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    tr:nth-child(even) {
+      background-color: #eee;
     }
   </style>
 </head>
 <body>
 
-  <h1>KARAOKEMOC</h1>
+  <h1>Buscar Músicas de Karaokê</h1>
+  <input type="text" id="search" placeholder="Digite artista, música ou código...">
 
-  <div class="comandos">
-    <div><b>COMANDOS:</b></div>
-    <div><b>S</b> - Encerra a música atual e volta para a tela de digitar outra música</div>
-    <div><b>Q</b> - Aumenta meio tom a música</div>
-    <div><b>W</b> - Diminui meio tom</div>
-    <div><b>P</b> - Pausa a música</div>
-    <div><b>R</b> - Reinicia a música</div>
-    <div><b>ESQ</b> - Sai do programa do Karaoke</div>
-  </div>
-
-  <div class="search-instruction">
-    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...<br>
-    VEJA O CÓDIGO CORRESPONDENTE E PRESSIONE ENTER NO PROGRAMA
-  </div>
-
-  <input type="text" id="search" oninput="filtrar()" placeholder="Digite o nome da música ou artista..."/>
-
-  <div id="tabela"></div>
-
+  <table id="results">
+    <thead>
+      <tr>
+        <th>Artista</th>
+        <th>Música</th>
+        <th>Código</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
   <script>
     const musicas = [
   { artista: "19", musica: "Ano Kami Hikohki Kumorizora", codigo: "18483" },
@@ -1778,36 +1717,48 @@
 { artista: "Bruno Mars", musica: "It Will Rain", codigo: "19009" },
 { artista: "Bruno Mars", musica: "Just The Way You Are", codigo: "19036" }
 ];
- function filtrar() {
-      const termo = document.getElementById("search").value.toLowerCase();
-      const tabela = document.getElementById("tabela");
-      tabela.innerHTML = "";
-
-      const agrupadas = {};
-
-      musicas
-        .filter(m => m.artista.toLowerCase().includes(termo) || m.musica.toLowerCase().includes(termo))
-        .sort((a, b) => a.artista.localeCompare(b.artista))
-        .forEach(m => {
-          const letra = m.artista.charAt(0).toUpperCase();
-          if (!agrupadas[letra]) agrupadas[letra] = [];
-          agrupadas[letra].push(m);
-        });
-
-      Object.keys(agrupadas).sort().forEach(letra => {
-        tabela.innerHTML += `<div class="grupo-letra">Letra ${letra}</div>`;
-        agrupadas[letra].forEach(m => {
-          tabela.innerHTML += `
-            <div class="linha-musica">
-              <div>${m.artista}</div>
-              <div>${m.musica}</div>
-              <div class="codigo">${m.codigo}</div>
-            </div>`;
-        });
-      });
+ function filtrarMusicas(termo) {
+      termo = termo.toLowerCase();
+      return musicas.filter(m => 
+        m.artista.toLowerCase().includes(termo) ||
+        m.musica.toLowerCase().includes(termo) ||
+        m.codigo.includes(termo)
+      );
     }
 
-    window.onload = filtrar;
+    function mostrarResultados(lista) {
+      const tabela = document.getElementById('results');
+      const corpo = document.getElementById('table-body');
+      corpo.innerHTML = '';
+
+      if (lista.length === 0) {
+        tabela.style.display = 'none';
+        return;
+      }
+
+      lista.forEach(m => {
+        corpo.innerHTML += `
+          <tr>
+            <td>${m.artista}</td>
+            <td>${m.musica}</td>
+            <td>${m.codigo}</td>
+          </tr>
+        `;
+      });
+
+      tabela.style.display = 'table';
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      const busca = e.target.value;
+      if (busca.length > 1) {
+        const resultados = filtrarMusicas(busca);
+        mostrarResultados(resultados);
+      } else {
+        document.getElementById('results').style.display = 'none';
+      }
+    });
   </script>
+
 </body>
 </html>
