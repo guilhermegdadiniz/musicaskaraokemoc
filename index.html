@@ -2,46 +2,93 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Busca de Músicas</title>
+  <title>KARAOKE MOC</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f0f0f0;
+      background-color: #fff;
+      padding: 40px;
+      font-size: 20px;
+      color: #222;
     }
+
     h1 {
       text-align: center;
+      font-size: 48px;
+      margin-bottom: 10px;
     }
-    input[type="text"] {
+
+    .comandos {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 30px;
+    }
+
+    .comandos b {
+      font-weight: bold;
+      color: #fff;
+      background: #333;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin: 0 2px;
+      display: inline-block;
+    }
+
+    #search {
       width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin: 20px 0;
+      padding: 16px;
+      font-size: 22px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 30px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      display: none;
+      font-size: 22px;
     }
+
     th, td {
+      text-align: left;
+      padding: 14px;
       border: 1px solid #ccc;
-      padding: 8px;
     }
+
     th {
-      background-color: #333;
+      background-color: #444;
       color: white;
+      font-size: 24px;
     }
+
+    td.codigo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #111;
+    }
+
     tr:nth-child(even) {
-      background-color: #eee;
+      background-color: #f4f4f4;
     }
   </style>
 </head>
 <body>
 
-  <h1>Buscar Músicas de Karaokê</h1>
+  <h1>KARAOKE MOC</h1>
+
+  <div class="comandos">
+    Comandos:
+    <b>S</b> - Encerra a música atual e volta para digitar outra |
+    <b>Q</b> - Aumenta meio tom |
+    <b>W</b> - Diminui meio tom |
+    <b>P</b> - Pausa a música |
+    <b>R</b> - Reinicia a música |
+    <b>ESQ</b> - Sai do programa do Karaokê
+  </div>
+
   <input type="text" id="search" placeholder="Digite artista, música ou código...">
 
-  <table id="results">
+  <table id="results" style="display:none;">
     <thead>
       <tr>
         <th>Artista</th>
@@ -51,6 +98,7 @@
     </thead>
     <tbody id="table-body"></tbody>
   </table>
+  
   <script>
     const musicas = [
   { artista: "19", musica: "Ano Kami Hikohki Kumorizora", codigo: "18483" },
@@ -1717,46 +1765,33 @@
 { artista: "Bruno Mars", musica: "It Will Rain", codigo: "19009" },
 { artista: "Bruno Mars", musica: "Just The Way You Are", codigo: "19036" }
 ];
- function filtrarMusicas(termo) {
-      termo = termo.toLowerCase();
-      return musicas.filter(m => 
+document.getElementById('search').addEventListener('input', function () {
+      const termo = this.value.toLowerCase();
+      const filtradas = musicas.filter(m =>
         m.artista.toLowerCase().includes(termo) ||
         m.musica.toLowerCase().includes(termo) ||
         m.codigo.includes(termo)
       );
-    }
 
-    function mostrarResultados(lista) {
+      const tbody = document.getElementById('table-body');
       const tabela = document.getElementById('results');
-      const corpo = document.getElementById('table-body');
-      corpo.innerHTML = '';
+      tbody.innerHTML = '';
 
-      if (lista.length === 0) {
+      if (filtradas.length === 0 || termo.length < 1) {
         tabela.style.display = 'none';
         return;
       }
 
-      lista.forEach(m => {
-        corpo.innerHTML += `
-          <tr>
-            <td>${m.artista}</td>
-            <td>${m.musica}</td>
-            <td>${m.codigo}</td>
-          </tr>
-        `;
+      filtradas.forEach(m => {
+        const row = `<tr>
+          <td>${m.artista}</td>
+          <td>${m.musica}</td>
+          <td class="codigo">${m.codigo}</td>
+        </tr>`;
+        tbody.innerHTML += row;
       });
 
       tabela.style.display = 'table';
-    }
-
-    document.getElementById('search').addEventListener('input', (e) => {
-      const busca = e.target.value;
-      if (busca.length > 1) {
-        const resultados = filtrarMusicas(busca);
-        mostrarResultados(resultados);
-      } else {
-        document.getElementById('results').style.display = 'none';
-      }
     });
   </script>
 
