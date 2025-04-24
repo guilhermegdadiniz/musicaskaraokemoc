@@ -12556,81 +12556,85 @@
       
 ];
     
-    const container = document.getElementById('resultados');
-    const input = document.getElementById('search');
+  const container = document.getElementById('resultados');
+  const input = document.getElementById('search');
 
-    function removerAcentos(texto) {
-      const mapaAcentos = {
-        'á': 'a', 'à': 'a', 'ã': 'a', 'â': 'a', 'é': 'e', 'è': 'e', 'ê': 'e', 'í': 'i',
-        'ì': 'i', 'ó': 'o', 'ò': 'o', 'õ': 'o', 'ô': 'o', 'ú': 'u', 'ù': 'u', 'ç': 'c',
-        'Á': 'A', 'À': 'A', 'Ã': 'A', 'Â': 'A', 'É': 'E', 'È': 'E', 'Ê': 'E', 'Í': 'I',
-        'Ì': 'I', 'Ó': 'O', 'Ò': 'O', 'Õ': 'O', 'Ô': 'O', 'Ú': 'U', 'Ù': 'U', 'Ç': 'C'
-      };
-      return texto.split('').map(char => mapaAcentos[char] || char).join('');
-    }
+  function removerAcentos(texto) {
+    const mapaAcentos = {
+      'á': 'a', 'à': 'a', 'ã': 'a', 'â': 'a', 'é': 'e', 'è': 'e', 'ê': 'e', 'í': 'i',
+      'ì': 'i', 'ó': 'o', 'ò': 'o', 'õ': 'o', 'ô': 'o', 'ú': 'u', 'ù': 'u', 'ç': 'c',
+      'Á': 'A', 'À': 'A', 'Ã': 'A', 'Â': 'A', 'É': 'E', 'È': 'E', 'Ê': 'E', 'Í': 'I',
+      'Ì': 'I', 'Ó': 'O', 'Ò': 'O', 'Õ': 'O', 'Ô': 'O', 'Ú': 'U', 'Ù': 'U', 'Ç': 'C'
+    };
+    return texto.split('').map(char => mapaAcentos[char] || char).join('');
+  }
 
-    function normalizarTexto(texto) {
-      // Remove acentos e letras duplicadas consecutivas
-      return removerAcentos(texto.toLowerCase()).replace(/(.)\1+/g, '$1');
-    }
+  function normalizarTexto(texto) {
+    return removerAcentos(
+      texto
+        .toLowerCase()
+        .replace(/(.)\1+/g, '$1') // letras duplicadas consecutivas
+        .replace(/\s+/g, ' ')     // espaços duplicados
+        .trim()                   // remove espaços no início/fim
+    );
+  }
 
-    function atualizarLista(filtro = '') {
-      const termoFiltro = normalizarTexto(filtro);
+  function atualizarLista(filtro = '') {
+    const termoFiltro = normalizarTexto(filtro);
 
-      const filtradas = musicas.filter(m => {
-        const artistaNormalizado = normalizarTexto(m.artista);
-        const musicaNormalizada = normalizarTexto(m.musica);
-        return (
-          artistaNormalizado.includes(termoFiltro) ||
-          musicaNormalizada.includes(termoFiltro) ||
-          m.codigo.includes(termoFiltro)
-        );
-      }).sort((a, b) => {
-        return a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica);
+    const filtradas = musicas.filter(m => {
+      const artistaNormalizado = normalizarTexto(m.artista);
+      const musicaNormalizada = normalizarTexto(m.musica);
+      return (
+        artistaNormalizado.includes(termoFiltro) ||
+        musicaNormalizada.includes(termoFiltro) ||
+        m.codigo.includes(termoFiltro)
+      );
+    }).sort((a, b) => {
+      return a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica);
+    });
+
+    const porLetra = {};
+
+    filtradas.forEach(m => {
+      const letra = m.artista.charAt(0).toUpperCase();
+      if (!porLetra[letra]) porLetra[letra] = [];
+      porLetra[letra].push(m);
+    });
+
+    container.innerHTML = '';
+
+    Object.keys(porLetra).sort().forEach(letra => {
+      const grupo = document.createElement('div');
+      grupo.classList.add('letra-grupo');
+
+      const titulo = document.createElement('div');
+      titulo.classList.add('letra-titulo');
+      titulo.textContent = `Letra ${letra}`;
+      grupo.appendChild(titulo);
+
+      porLetra[letra].forEach(m => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        card.innerHTML = 
+          `<div>
+            <div><strong>${m.artista}</strong></div>
+            <div>${m.musica}</div>
+          </div>
+          <div class="codigo">${m.codigo}</div>`;
+
+        grupo.appendChild(card);
       });
 
-      const porLetra = {};
+      container.appendChild(grupo);
+    });
+  }
 
-      filtradas.forEach(m => {
-        const letra = m.artista.charAt(0).toUpperCase();
-        if (!porLetra[letra]) porLetra[letra] = [];
-        porLetra[letra].push(m);
-      });
+  input.addEventListener('input', () => atualizarLista(input.value));
 
-      container.innerHTML = '';
-
-      Object.keys(porLetra).sort().forEach(letra => {
-        const grupo = document.createElement('div');
-        grupo.classList.add('letra-grupo');
-
-        const titulo = document.createElement('div');
-        titulo.classList.add('letra-titulo');
-        titulo.textContent = `Letra ${letra}`;
-        grupo.appendChild(titulo);
-
-        porLetra[letra].forEach(m => {
-          const card = document.createElement('div');
-          card.classList.add('card');
-
-          card.innerHTML = 
-            `<div>
-              <div><strong>${m.artista}</strong></div>
-              <div>${m.musica}</div>
-            </div>
-            <div class="codigo">${m.codigo}</div>`;
-
-          grupo.appendChild(card);
-        });
-
-        container.appendChild(grupo);
-      });
-    }
-
-    input.addEventListener('input', () => atualizarLista(input.value));
-
-    atualizarLista(); // Inicial
-  </script>
-
-</body>
+  atualizarLista(); // Inicial
+</script>
+  </body>
 </html>
 
