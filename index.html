@@ -12582,6 +12582,7 @@
         return a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica);
       });
 
+  texto = texto.replace(/(\w)\1+/g, '$1');
       const porLetra = {};
 
       filtradas.forEach(m => {
