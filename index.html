@@ -12556,7 +12556,7 @@
       
 ];
     
-  const container = document.getElementById('resultados');
+    const container = document.getElementById('resultados');
     const input = document.getElementById('search');
 
     function removerAcentos(texto) {
@@ -12571,7 +12571,7 @@
 
     function atualizarLista(filtro = '') {
       const termoFiltro = removerAcentos(filtro.toLowerCase());
-      
+
       const filtradas = musicas.filter(m => {
         return (
           removerAcentos(m.artista.toLowerCase()).includes(termoFiltro) ||
@@ -12585,7 +12585,7 @@
       const porLetra = {};
 
       filtradas.forEach(m => {
-        const letra = m.artista.charAt(0).toUpperCase();
+        const letra = removerAcentos(m.artista.trim().charAt(0).toUpperCase());
         if (!porLetra[letra]) porLetra[letra] = [];
         porLetra[letra].push(m);
       });
@@ -12605,7 +12605,7 @@
           const card = document.createElement('div');
           card.classList.add('card');
 
-          card.innerHTML = 
+          card.innerHTML =
             `<div>
               <div><strong>${m.artista}</strong></div>
               <div>${m.musica}</div>
