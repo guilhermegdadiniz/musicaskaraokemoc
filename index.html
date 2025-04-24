@@ -1,9 +1,9 @@
 <!DOCTYPE html> 
-<html lang="pt-BR"> 
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" /> 
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>KARAOKEMOC</title> 
+  <title>KARAOKEMOC</title>
   <style>
     body {
       margin: 0;
@@ -12,18 +12,21 @@
       font-size: 22px;
       padding: 20px;
     }
+
     h1 {
       text-align: center;
       color: #000;
       font-size: 40px;
       margin-bottom: 5px;
     }
+
     .comandos-titulo {
       text-align: center;
       font-weight: bold;
       font-size: 24px;
       margin-bottom: 10px;
     }
+
     .comandos {
       text-align: center;
       color: #000;
@@ -31,12 +34,14 @@
       margin-bottom: 25px;
       line-height: 1.8;
     }
+
     .comandos b {
       color: #000;
       background-color: #dcdcdc;
       padding: 2px 6px;
       border-radius: 5px;
     }
+
     .instrucoes {
       color: blue;
       text-align: center;
@@ -44,6 +49,7 @@
       font-weight: bold;
       margin-bottom: 20px;
     }
+
     #search {
       width: 100%;
       padding: 15px;
@@ -53,15 +59,18 @@
       margin-bottom: 30px;
       box-sizing: border-box;
     }
+
     .letra-grupo {
       margin-bottom: 20px;
     }
+
     .letra-titulo {
       font-size: 20px;
       font-weight: bold;
       color: #333;
       margin-bottom: 10px;
     }
+
     .card {
       background-color: white;
       padding: 15px;
@@ -72,6 +81,7 @@
       margin-bottom: 10px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
+
     .codigo {
       background-color: blue;
       color: white;
@@ -12559,18 +12569,13 @@
       return texto.split('').map(char => mapaAcentos[char] || char).join('');
     }
 
-    function normalizarNome(nome) {
-      // Substitui "Gustavo Lima" e "Gusttavo Lima" como iguais
-      return nome.replace(/(Gusttavo|Gustavo)/gi, 'Gustavo');
-    }
-
     function atualizarLista(filtro = '') {
       // Remove os acentos antes de filtrar
       const termoFiltro = removerAcentos(filtro.toLowerCase());
       
       const filtradas = musicas.filter(m => {
         return (
-          removerAcentos(normalizarNome(m.artista.toLowerCase())).includes(termoFiltro) ||
+          removerAcentos(m.artista.toLowerCase()).includes(termoFiltro) ||
           removerAcentos(m.musica.toLowerCase()).includes(termoFiltro) ||
           m.codigo.includes(termoFiltro)
         );
@@ -12595,7 +12600,7 @@
 
         const titulo = document.createElement('div');
         titulo.classList.add('letra-titulo');
-        titulo.textContent = `Letra ${letra}`;
+        titulo.textContent = Letra ${letra};
         grupo.appendChild(titulo);
 
         porLetra[letra].forEach(m => {
@@ -12603,11 +12608,11 @@
           card.classList.add('card');
 
           card.innerHTML = 
-            `<div>
+            <div>
               <div><strong>${m.artista}</strong></div>
               <div>${m.musica}</div>
             </div>
-            <div class="codigo">${m.codigo}</div>`;
+            <div class="codigo">${m.codigo}</div>;
 
           grupo.appendChild(card);
         });
@@ -12623,3 +12628,5 @@
 
 </body>
 </html>
+
+
