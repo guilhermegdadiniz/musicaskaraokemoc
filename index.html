@@ -1,110 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>KARAOKEMOC</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Busca de Músicas</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      font-size: 22px;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #000;
-      font-size: 40px;
-      margin-bottom: 5px;
-    }
-
-    .comandos-titulo {
-      text-align: center;
-      font-weight: bold;
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .comandos {
-      text-align: center;
-      color: #000;
-      font-size: 18px;
-      margin-bottom: 25px;
-      line-height: 1.8;
-    }
-
-    .comandos b {
-      color: #000;
-      background-color: #dcdcdc;
-      padding: 2px 6px;
-      border-radius: 5px;
-    }
-
-    .instrucoes {
-      color: blue;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-
-    #search {
-      width: 100%;
-      padding: 15px;
-      font-size: 20px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 30px;
-      box-sizing: border-box;
-    }
-
-    .letra-grupo {
-      margin-bottom: 20px;
-    }
-
-    .letra-titulo {
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    .card {
-      background-color: white;
-      padding: 15px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .codigo {
-      background-color: blue;
-      color: white;
-      padding: 8px 12px;
-      font-weight: bold;
-      border-radius: 6px;
-      font-size: 22px;
-      min-width: 80px;
-      text-align: center;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #search { width: 100%; padding: 10px; margin-bottom: 20px; }
+    .letra-grupo { margin-bottom: 30px; }
+    .letra-titulo { font-size: 24px; margin-bottom: 10px; }
+    .card { border: 1px solid #ccc; padding: 10px; margin-bottom: 5px; display: flex; justify-content: space-between; }
+    .codigo { font-weight: bold; color: #555; }
   </style>
 </head>
 <body>
 
-  <h1>KARAOKE MOC</h1>
- 
-  <div class="instrucoes">
-    PESQUISE A MÚSICA OU O CANTOR QUE DESEJA...<br />
-    VEJA O CÓDIGO CORRESPONDENTE À MÚSICA E PRESSIONE A TECLA ENTER...
-  </div>
-
   <input type="text" id="search" placeholder="Digite artista, música ou código...">
-
   <div id="resultados"></div>
 
   <script>
@@ -12556,7 +12467,7 @@
       
 ];
     
-    const container = document.getElementById('resultados');
+const container = document.getElementById('resultados');
     const input = document.getElementById('search');
 
     function removerAcentos(texto) {
@@ -12569,18 +12480,23 @@
       return texto.split('').map(char => mapaAcentos[char] || char).join('');
     }
 
+    function normalizarTexto(texto) {
+      // Remove acentos e letras duplicadas consecutivas
+      return removerAcentos(texto.toLowerCase()).replace(/(.)\1+/g, '$1');
+    }
+
     function atualizarLista(filtro = '') {
-      // Remove os acentos antes de filtrar
-      const termoFiltro = removerAcentos(filtro.toLowerCase());
-      
+      const termoFiltro = normalizarTexto(filtro);
+
       const filtradas = musicas.filter(m => {
+        const artistaNormalizado = normalizarTexto(m.artista);
+        const musicaNormalizada = normalizarTexto(m.musica);
         return (
-          removerAcentos(m.artista.toLowerCase()).includes(termoFiltro) ||
-          removerAcentos(m.musica.toLowerCase()).includes(termoFiltro) ||
+          artistaNormalizado.includes(termoFiltro) ||
+          musicaNormalizada.includes(termoFiltro) ||
           m.codigo.includes(termoFiltro)
         );
       }).sort((a, b) => {
-        // Ordena alfabeticamente por artista e música
         return a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica);
       });
 
@@ -12622,8 +12538,7 @@
     }
 
     input.addEventListener('input', () => atualizarLista(input.value));
-
-    atualizarLista(); // Inicial
+    atualizarLista();
   </script>
 
 </body>
