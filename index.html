@@ -12556,17 +12556,28 @@
       
 ];
     
-const container = document.getElementById('resultados');
+    const container = document.getElementById('resultados');
     const input = document.getElementById('search');
 
+    function removerAcentos(texto) {
+      const mapaAcentos = {
+        'á': 'a', 'à': 'a', 'ã': 'a', 'â': 'a', 'é': 'e', 'è': 'e', 'ê': 'e', 'í': 'i',
+        'ì': 'i', 'ó': 'o', 'ò': 'o', 'õ': 'o', 'ô': 'o', 'ú': 'u', 'ù': 'u', 'ç': 'c',
+        'Á': 'A', 'À': 'A', 'Ã': 'A', 'Â': 'A', 'É': 'E', 'È': 'E', 'Ê': 'E', 'Í': 'I',
+        'Ì': 'I', 'Ó': 'O', 'Ò': 'O', 'Õ': 'O', 'Ô': 'O', 'Ú': 'U', 'Ù': 'U', 'Ç': 'C'
+      };
+      return texto.split('').map(char => mapaAcentos[char] || char).join('');
+    }
+
     function atualizarLista(filtro = '') {
-      // Ordena a lista de músicas em ordem alfabética
+      // Remove os acentos antes de filtrar
+      const termoFiltro = removerAcentos(filtro.toLowerCase());
+      
       const filtradas = musicas.filter(m => {
-        const termo = filtro.toLowerCase();
         return (
-          m.artista.toLowerCase().includes(termo) ||
-          m.musica.toLowerCase().includes(termo) ||
-          m.codigo.includes(termo)
+          removerAcentos(m.artista.toLowerCase()).includes(termoFiltro) ||
+          removerAcentos(m.musica.toLowerCase()).includes(termoFiltro) ||
+          m.codigo.includes(termoFiltro)
         );
       }).sort((a, b) => {
         // Ordena alfabeticamente por artista e música
@@ -12596,13 +12607,12 @@ const container = document.getElementById('resultados');
           const card = document.createElement('div');
           card.classList.add('card');
 
-          card.innerHTML = `
-            <div>
+          card.innerHTML = 
+            `<div>
               <div><strong>${m.artista}</strong></div>
               <div>${m.musica}</div>
             </div>
-            <div class="codigo">${m.codigo}</div>
-          `;
+            <div class="codigo">${m.codigo}</div>`;
 
           grupo.appendChild(card);
         });
