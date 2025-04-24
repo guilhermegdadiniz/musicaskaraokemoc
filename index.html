@@ -12556,7 +12556,7 @@
       
 ];
     
-    const container = document.getElementById('resultados');
+  const container = document.getElementById('resultados');
     const input = document.getElementById('search');
 
     function removerAcentos(texto) {
@@ -12570,7 +12570,6 @@
     }
 
     function atualizarLista(filtro = '') {
-      // Remove os acentos antes de filtrar
       const termoFiltro = removerAcentos(filtro.toLowerCase());
       
       const filtradas = musicas.filter(m => {
@@ -12580,7 +12579,6 @@
           m.codigo.includes(termoFiltro)
         );
       }).sort((a, b) => {
-        // Ordena alfabeticamente por artista e música
         return a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica);
       });
 
