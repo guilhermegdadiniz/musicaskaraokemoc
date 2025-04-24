@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -12600,7 +12600,7 @@
 
         const titulo = document.createElement('div');
         titulo.classList.add('letra-titulo');
-        titulo.textContent = Letra ${letra};
+        titulo.textContent = `Letra ${letra}`;
         grupo.appendChild(titulo);
 
         porLetra[letra].forEach(m => {
@@ -12608,11 +12608,11 @@
           card.classList.add('card');
 
           card.innerHTML = 
-            <div>
+            `<div>
               <div><strong>${m.artista}</strong></div>
               <div>${m.musica}</div>
             </div>
-            <div class="codigo">${m.codigo}</div>;
+            <div class="codigo">${m.codigo}</div>`;
 
           grupo.appendChild(card);
         });
@@ -12628,5 +12628,4 @@
 
 </body>
 </html>
-
 
