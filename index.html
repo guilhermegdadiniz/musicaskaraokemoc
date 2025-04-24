@@ -12553,15 +12553,6 @@
 { "artista": "Taylor Swift", "musica": "Wildest dreams", "codigo": "20470" },
 { "artista": "U2", "musica": "Sweetest thing", "codigo": "20469" }
 
-
-
-
-
-
-
-
-
-
       
 ];
     
@@ -12569,6 +12560,7 @@ const container = document.getElementById('resultados');
     const input = document.getElementById('search');
 
     function atualizarLista(filtro = '') {
+      // Ordena a lista de músicas em ordem alfabética
       const filtradas = musicas.filter(m => {
         const termo = filtro.toLowerCase();
         return (
@@ -12576,6 +12568,9 @@ const container = document.getElementById('resultados');
           m.musica.toLowerCase().includes(termo) ||
           m.codigo.includes(termo)
         );
+      }).sort((a, b) => {
+        // Ordena alfabeticamente por artista e música
+        return a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica);
       });
 
       const porLetra = {};
