@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -12569,18 +12569,23 @@
       return texto.split('').map(char => mapaAcentos[char] || char).join('');
     }
 
+    function normalizarTexto(texto) {
+      // Remove acentos e letras duplicadas consecutivas
+      return removerAcentos(texto.toLowerCase()).replace(/(.)\1+/g, '$1');
+    }
+
     function atualizarLista(filtro = '') {
-      // Remove os acentos antes de filtrar
-      const termoFiltro = removerAcentos(filtro.toLowerCase());
-      
+      const termoFiltro = normalizarTexto(filtro);
+
       const filtradas = musicas.filter(m => {
+        const artistaNormalizado = normalizarTexto(m.artista);
+        const musicaNormalizada = normalizarTexto(m.musica);
         return (
-          removerAcentos(m.artista.toLowerCase()).includes(termoFiltro) ||
-          removerAcentos(m.musica.toLowerCase()).includes(termoFiltro) ||
+          artistaNormalizado.includes(termoFiltro) ||
+          musicaNormalizada.includes(termoFiltro) ||
           m.codigo.includes(termoFiltro)
         );
       }).sort((a, b) => {
-        // Ordena alfabeticamente por artista e música
         return a.artista.localeCompare(b.artista) || a.musica.localeCompare(b.musica);
       });
 
